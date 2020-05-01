@@ -1,4 +1,4 @@
-import { Camera } from './camera';
+import { Camera } from './camera'
 
 /**
  * Main Canvas class.
@@ -7,16 +7,37 @@ export class Main {
   _canvas: HTMLCanvasElement;
   ctx: CanvasRenderingContext2D;
 
-  constructor() {
-    this._canvas = <HTMLCanvasElement>document.getElementById('app');
-    this.ctx = this._canvas.getContext('2d');
+  camera: Camera;
 
-    this.ctx.imageSmoothingEnabled = false;
+  renderInterval: NodeJS.Timeout;
 
-    setInterval(() => this.render(), 0);
+  constructor () {
+    this._canvas = <HTMLCanvasElement>document.getElementById('app')
+    this._canvas.width = window.innerWidth;
+    this._canvas.height = window.innerHeight;
+
+    this.ctx = this._canvas.getContext('2d')
+
+    this.ctx.imageSmoothingEnabled = false
+
+    this.camera = new Camera()
   }
 
-  render() {
-    // Global render step
+  runRender () {
+    this.renderInterval = setInterval(() => this.render(), 0)
+  }
+
+  stopRender () {
+    clearInterval(this.renderInterval)
+  }
+
+  render () {
+    this.ctx.clearRect(
+      0,
+      0,
+      this._canvas.width,
+      this._canvas.height
+    );
+    this.camera.render(this.ctx);
   }
 }
