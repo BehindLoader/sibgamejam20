@@ -48,9 +48,10 @@ export class Camera {
     }
 
     for (const terrain of this.terrain) {
-      terrain.draw(ctx)
+      terrain.draw(ctx);
     }
 
-    this.player.draw(ctx)
+    this.player.step();
+    this.player.draw(ctx);
   }
 }
