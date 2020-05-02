@@ -1,40 +1,48 @@
 import { MOVE_SPEED } from '../settings'
+import { Sprite } from './sprites';
 
 
 abstract class AbstractCharacter {
   x: number;
   y: number;
+  standSprite: Sprite;
+  moveSprite: Sprite;
 
-  constructor(x: number, y: number) {
+  isMove: boolean;
+
+  constructor(x: number, y: number, standSprite: Sprite, moveSprite: Sprite) {
     this.x = x;
     this.y = y;
+    this.standSprite = standSprite;
+    this.moveSprite = moveSprite;
+
+    this.isMove = false;
   }
 
-  draw(ctx: CanvasRenderingContext2D) {
-    ctx.fillStyle = 'pink';
-    ctx.fillRect(
-      this.x,
-      this.y,
-      100,
-      100,
-    );
+  draw(cameraX: number, cameraY: number, ctx: CanvasRenderingContext2D) {
+    if (this.isMove) {
+      this.moveSprite.draw(
+        ctx,
+        this.x,
+        this.y,
+        cameraX,
+        cameraY,
+      );
+    } else {
+      this.standSprite.draw(
+        ctx,
+        this.x,
+        this.y,
+        cameraX,
+        cameraY,
+      );
+    }
   }
 }
 
-
-export class Character extends AbstractCharacter {
-  x: number;
-  y: number;
-
-  constructor(x: number, y: number) {
-    super(x, y);
-  }
-}
+export class Character extends AbstractCharacter {}
 
 export class Player extends AbstractCharacter {
-  x: number;
-  y: number;
-
   keysPreferences: {
     [key: number]: {
       pressed: boolean;
@@ -42,8 +50,8 @@ export class Player extends AbstractCharacter {
     }
   };
 
-  constructor(x: number, y: number) {
-    super(x, y);
+  constructor(x: number, y: number, standSprite: Sprite, moveSprite: Sprite) {
+    super(x, y, standSprite, moveSprite);
 
     this.keysPreferences = {
       68: {
