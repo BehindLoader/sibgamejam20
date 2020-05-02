@@ -38,4 +38,10 @@ export abstract class AbstractScene {
       stand: string;
     };
   };
+
+  public abstract step(): void
+
+  public abstract willMount(): void
+
+  public abstract didMount(): void
 }

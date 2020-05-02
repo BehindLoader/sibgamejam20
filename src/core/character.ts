@@ -50,25 +50,34 @@ export class Player extends AbstractCharacter {
     }
   };
 
+  blocked: {
+    right?: boolean;
+    left?: boolean;
+    up?: boolean;
+    down?: boolean;
+  }
+
   constructor(x: number, y: number, standSprite: Sprite, moveSprite: Sprite) {
     super(x, y, standSprite, moveSprite);
+
+    this.blocked = {}
 
     this.keysPreferences = {
       68: {
         pressed: false,
-        callback: () => { this.x += MOVE_SPEED; },
+        callback: () => { this.x += this.blocked.right ? 0 : MOVE_SPEED; },
       },
       65: {
         pressed: false,
-        callback: () => { this.x -= MOVE_SPEED; },
+        callback: () => { this.x -= this.blocked.left ? 0 : MOVE_SPEED; },
       },
       83: {
         pressed: false,
-        callback: () => { this.y += MOVE_SPEED; }
+        callback: () => { this.y += this.blocked.down ? 0 : MOVE_SPEED; }
       },
       87: {
         pressed: false,
-        callback: () => { this.y -= MOVE_SPEED; }
+        callback: () => { this.y -= this.blocked.up ? 0 : MOVE_SPEED; }
       },
     }
 
@@ -80,6 +89,56 @@ export class Player extends AbstractCharacter {
       'keyup',
       (e: KeyboardEvent) => this.keyUp(e),
     );
+  }
+
+  public checkCollision(x: number, y: number, w: number, h: number) {
+    // debugger
+    this.blocked.right = this.contains({
+      x: this.x + MOVE_SPEED,
+      y: this.y,
+      w: this.standSprite.w,
+      h: this.standSprite.h,
+    }, { x, y, w, h })
+    this.blocked.left = this.contains({
+      x: this.x - MOVE_SPEED,
+      y: this.y,
+      w: this.standSprite.w,
+      h: this.standSprite.h,
+    }, { x, y, w, h })
+    this.blocked.up = this.contains({
+      x: this.x,
+      y: this.y - MOVE_SPEED,
+      w: this.standSprite.w,
+      h: this.standSprite.h,
+    }, { x, y, w, h })
+    this.blocked.down = this.contains({
+      x: this.x,
+      y: this.y + MOVE_SPEED,
+      w: this.standSprite.w,
+      h: this.standSprite.h,
+    }, { x, y, w, h })
+  }
+
+  private contains(
+    player: {
+      x: number;
+      y: number;
+      w: number;
+      h: number;
+    },
+    other: {
+      x: number;
+      y: number;
+      w: number;
+      h: number;
+    }
+  ): boolean {
+    return (
+      player.x + player.w > other.x &&
+      player.x < other.x + other.w &&
+      player.y + player.h > other.y &&
+      player.y < other.y + other.h
+    )
   }
 
   public step() {

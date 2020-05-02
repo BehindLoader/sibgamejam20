@@ -4,6 +4,8 @@ import { Terrain } from './terrain';
 import { Sprite } from './sprites';
 
 export class Camera {
+  scene: AbstractScene;
+
   sprites: { [key: string]: Sprite };
   characters: Character[];
   player: Player;
@@ -18,6 +20,9 @@ export class Camera {
   }
 
   setScene (scene: AbstractScene) {
+    this.scene = scene;
+    this.scene.willMount();
+
     this.sprites = Object.keys(scene.sprites).reduce((acc, key) => {
       const sprite = scene.sprites[key];
       acc[key] = new Sprite(
@@ -54,22 +59,31 @@ export class Camera {
         item.h,
         this.sprites[item.sprite],
       );
-    })
+    });
+
+    this.scene.didMount();
   }
 
   render (ctx: CanvasRenderingContext2D) {
-    this.x = this.player.x + (window.innerWidth / 2);
-    this.y = this.player.y + (window.innerHeight / 2);
-
-    for (const character of this.characters) {
-      character.draw(this.x, this.y, ctx);
-    }
+    this.scene.step();
 
     for (const terrain of this.terrain) {
       terrain.draw(this.x, this.y, ctx);
     }
 
+    for (const character of this.characters) {
+      this.player.checkCollision(
+        character.x,
+        character.y,
+        character.standSprite.w,
+        character.standSprite.h,
+      )
+      character.draw(this.x, this.y, ctx);
+    }
+
     this.player.step();
+    this.x = this.player.x - window.innerWidth / 2;
+    this.y = this.player.y - window.innerHeight / 2;
     this.player.draw(this.x, this.y, ctx);
   }
 }

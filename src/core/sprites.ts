@@ -15,16 +15,26 @@ export class Sprite {
   }
 
   public draw(ctx: CanvasRenderingContext2D, x: number, y: number, cx: number, cy: number) {
-    ctx.drawImage(
-      this.image,
-      this.x,
-      this.y,
-      this.w,
-      this.h,
-      x,
-      y,
-      this.w,
-      this.h,
-    )
+    const spriteXPosition = x - cx;
+    const spriteYPosition = y - cy;
+
+    const leftVisible = spriteXPosition + this.w > 0;
+    const rightVisible = spriteXPosition < window.innerWidth;
+    const topVisible = spriteYPosition + this.h > 0;
+    const bottomVisible = spriteYPosition < window.innerHeight;
+
+    if (leftVisible && rightVisible && topVisible && bottomVisible) {
+      ctx.drawImage(
+        this.image,
+        this.x,
+        this.y,
+        this.w,
+        this.h,
+        spriteXPosition,
+        spriteYPosition,
+        this.w,
+        this.h,
+      )
+    }
   }
 }
