@@ -1,5 +1,7 @@
 import { MOVE_SPEED } from '../settings'
 import { Sprite } from './sprites';
+import globals from './globals';
+import { DialogWindow } from './dialog';
 
 
 abstract class AbstractCharacter {
@@ -40,7 +42,15 @@ abstract class AbstractCharacter {
   }
 }
 
-export class Character extends AbstractCharacter {}
+export class Character extends AbstractCharacter {
+  constructor(x: number, y: number, standSprite: Sprite, moveSprite: Sprite) {
+    super(x, y, standSprite, moveSprite);
+  }
+
+  interrupt() {
+    return new DialogWindow('HI!');
+  }
+}
 
 export class Player extends AbstractCharacter {
   keysPreferences: {
@@ -56,6 +66,13 @@ export class Player extends AbstractCharacter {
     up?: boolean;
     down?: boolean;
   }
+
+  nearestObject?: {
+    distance: number;
+    character: Character;
+  };
+
+  dialog: DialogWindow;
 
   constructor(x: number, y: number, standSprite: Sprite, moveSprite: Sprite) {
     super(x, y, standSprite, moveSprite);
@@ -79,6 +96,15 @@ export class Player extends AbstractCharacter {
         pressed: false,
         callback: () => { this.y -= this.blocked.up ? 0 : MOVE_SPEED; }
       },
+      69: {
+        pressed: false,
+        callback: () => {
+          if (this.nearestObject?.distance < MOVE_SPEED * 25) {
+            this.dialog = this.nearestObject.character.interrupt();
+            this.keysPreferences[69].pressed = false;
+          }
+        }
+      }
     }
 
     document.addEventListener(
@@ -92,31 +118,48 @@ export class Player extends AbstractCharacter {
   }
 
   public checkCollision(x: number, y: number, w: number, h: number) {
-    // debugger
-    this.blocked.right = this.contains({
+    this.blocked.right = this.blocked.right ? this.blocked.right : this.contains({
       x: this.x + MOVE_SPEED,
       y: this.y,
       w: this.standSprite.w,
       h: this.standSprite.h,
     }, { x, y, w, h })
-    this.blocked.left = this.contains({
+    this.blocked.left = this.blocked.left ? this.blocked.left : this.contains({
       x: this.x - MOVE_SPEED,
       y: this.y,
       w: this.standSprite.w,
       h: this.standSprite.h,
     }, { x, y, w, h })
-    this.blocked.up = this.contains({
+    this.blocked.up = this.blocked.up ? this.blocked.up : this.contains({
       x: this.x,
       y: this.y - MOVE_SPEED,
       w: this.standSprite.w,
       h: this.standSprite.h,
     }, { x, y, w, h })
-    this.blocked.down = this.contains({
+    this.blocked.down = this.blocked.down ? this.blocked.down : this.contains({
       x: this.x,
       y: this.y + MOVE_SPEED,
       w: this.standSprite.w,
       h: this.standSprite.h,
     }, { x, y, w, h })
+  }
+
+  public setInteractive(character: Character) {
+    const playerX = this.x + this.standSprite.w / 2;
+    const playerY = this.y + this.standSprite.h / 2;
+    const otherX = character.x + character.standSprite.w / 2;
+    const otherY = character.y + character.standSprite.h / 2;
+
+    const width = Math.abs(playerX - otherX);
+    const height = Math.abs(playerY - otherY);
+
+    const distance = Math.sqrt(width ** 2 + height ** 2);
+
+    const nearestDistance = this.nearestObject?.distance || Infinity;
+
+    if (distance < nearestDistance) {
+      this.nearestObject = { distance, character }
+    }
   }
 
   private contains(
@@ -134,10 +177,10 @@ export class Player extends AbstractCharacter {
     }
   ): boolean {
     return (
-      player.x + player.w > other.x &&
       player.x < other.x + other.w &&
+      player.x + player.w > other.x &&
       player.y + player.h > other.y &&
-      player.y < other.y + other.h
+      player.y < other.y + player.h
     )
   }
 
@@ -146,12 +189,17 @@ export class Player extends AbstractCharacter {
       return item.pressed
     }).forEach(item => {
       item.callback();
-    })
+    });
   }
 
   private keyDown(e: KeyboardEvent) {
     const keyboardObject = this.keysPreferences[e.keyCode];
     if (keyboardObject) {
+      if (this.dialog) {
+        this.dialog.close();
+        delete this.dialog;
+      }
+
       keyboardObject.pressed = true;
     }
   }

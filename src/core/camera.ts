@@ -2,6 +2,7 @@ import { Character, Player } from './character';
 import { AbstractScene } from './scene'
 import { Terrain } from './terrain';
 import { Sprite } from './sprites';
+import globals from './globals';
 
 export class Camera {
   scene: AbstractScene;
@@ -65,12 +66,13 @@ export class Camera {
   }
 
   render (ctx: CanvasRenderingContext2D) {
-    this.scene.step();
-
     for (const terrain of this.terrain) {
       terrain.draw(this.x, this.y, ctx);
     }
+    this.scene.step();
 
+    this.player.blocked = {}
+    delete this.player.nearestObject
     for (const character of this.characters) {
       this.player.checkCollision(
         character.x,
@@ -78,12 +80,19 @@ export class Camera {
         character.standSprite.w,
         character.standSprite.h,
       )
+      this.player.setInteractive(character);
       character.draw(this.x, this.y, ctx);
     }
 
-    this.player.step();
-    this.x = this.player.x - window.innerWidth / 2;
-    this.y = this.player.y - window.innerHeight / 2;
-    this.player.draw(this.x, this.y, ctx);
+    if (globals.PAUSED) {
+      if (this.player.dialog) {
+        this.player.dialog.draw(ctx);
+      }
+    } else {
+      this.player.step();
+      this.x = this.player.x - window.innerWidth / 2;
+      this.y = this.player.y - window.innerHeight / 2;
+      this.player.draw(this.x, this.y, ctx);
+    }
   }
 }

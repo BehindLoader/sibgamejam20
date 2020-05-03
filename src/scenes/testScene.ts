@@ -36,8 +36,8 @@ export class TestScene extends AbstractScene {
   ];
 
   public player = {
-    x: 150,
-    y: 150,
+    x: 300,
+    y: 300,
     sprite: {
       stand: 'test',
       move: 'test',
@@ -57,15 +57,15 @@ export class TestScene extends AbstractScene {
   public step() {}
 
   public willMount() {
-    // for (const _ of Array(15)) {
-    //   this.characters.push({
-    //     x: Math.random() * 150,
-    //     y: Math.random() * 150,
-    //     sprite: {
-    //       stand: 'test',
-    //     },
-    //   });
-    // }
+    for (const _ of Array(15)) {
+      this.characters.push({
+        x: Math.random() * 150,
+        y: Math.random() * 150,
+        sprite: {
+          stand: 'test',
+        },
+      });
+    }
   }
 
   public didMount() {}

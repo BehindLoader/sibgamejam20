@@ -24,7 +24,7 @@ export class Main {
   }
 
   runRender () {
-    this.renderInterval = setInterval(() => this.render(), 0)
+    window.requestAnimationFrame(() => this.render())
   }
 
   stopRender () {
@@ -39,5 +39,6 @@ export class Main {
       this._canvas.height
     );
     this.camera.render(this.ctx);
+    window.requestAnimationFrame(() => this.render())
   }
 }
