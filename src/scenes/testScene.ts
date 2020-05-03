@@ -4,24 +4,41 @@ export class TestScene extends AbstractScene {
   public sprites = {
     test: {
       image: '/src/sprites/testScene/test.png',
-      x: 1,
-      y: 1,
-      w: 100,
-      h: 50,
+      frames: [
+        {
+          x: 1,
+          y: 1,
+          w: 100,
+          h: 50,
+        }, {
+          x: 101,
+          y: 51,
+          w: 100,
+          h: 50,
+        }
+      ],
     },
     planet: {
       image: './src/sprites/testScene/parallax-space-big-planet.png',
-      x: 0,
-      y: 0,
-      w: 88,
-      h: 87,
+      frames: [
+        {
+          x: 0,
+          y: 0,
+          w: 88,
+          h: 87,
+        }
+      ],
     },
     minecraft: {
       image: './src/sprites/testScene/minecraft.png',
-      x: 0,
-      y: 0,
-      w: 16,
-      h: 16,
+      frames: [
+        {
+          x: 0,
+          y: 0,
+          w: 16,
+          h: 16,
+        }
+      ],
     }
   };
 
@@ -40,7 +57,7 @@ export class TestScene extends AbstractScene {
     y: 300,
     sprite: {
       stand: 'test',
-      move: 'test',
+      move: 'planet',
     },
   };
 

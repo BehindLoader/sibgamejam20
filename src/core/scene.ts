@@ -6,10 +6,12 @@ export abstract class AbstractScene {
   sprites: {
     [key: string]: {
       image: string;
-      x: number;
-      y: number;
-      w: number;
-      h: number;
+      frames: {
+        x: number;
+        y: number;
+        w: number;
+        h: number;
+      }[];
     }
   };
 

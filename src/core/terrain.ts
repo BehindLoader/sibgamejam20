@@ -20,8 +20,8 @@ export class Terrain {
       for (let w = 0; w < this.xRepeat; w++) {
         this.sprite.draw(
           ctx,
-          this.x + this.sprite.w * w,
-          this.y + this.sprite.h * h,
+          this.x + this.sprite.getFrame().w * w,
+          this.y + this.sprite.getFrame().h * h,
           cameraX,
           cameraY,
         );

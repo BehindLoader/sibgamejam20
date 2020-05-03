@@ -121,34 +121,34 @@ export class Player extends AbstractCharacter {
     this.blocked.right = this.blocked.right ? this.blocked.right : this.contains({
       x: this.x + MOVE_SPEED,
       y: this.y,
-      w: this.standSprite.w,
-      h: this.standSprite.h,
+      w: this.standSprite.getFrame().w,
+      h: this.standSprite.getFrame().h,
     }, { x, y, w, h })
     this.blocked.left = this.blocked.left ? this.blocked.left : this.contains({
       x: this.x - MOVE_SPEED,
       y: this.y,
-      w: this.standSprite.w,
-      h: this.standSprite.h,
+      w: this.standSprite.getFrame().w,
+      h: this.standSprite.getFrame().h,
     }, { x, y, w, h })
     this.blocked.up = this.blocked.up ? this.blocked.up : this.contains({
       x: this.x,
       y: this.y - MOVE_SPEED,
-      w: this.standSprite.w,
-      h: this.standSprite.h,
+      w: this.standSprite.getFrame().w,
+      h: this.standSprite.getFrame().h,
     }, { x, y, w, h })
     this.blocked.down = this.blocked.down ? this.blocked.down : this.contains({
       x: this.x,
       y: this.y + MOVE_SPEED,
-      w: this.standSprite.w,
-      h: this.standSprite.h,
+      w: this.standSprite.getFrame().w,
+      h: this.standSprite.getFrame().h,
     }, { x, y, w, h })
   }
 
   public setInteractive(character: Character) {
-    const playerX = this.x + this.standSprite.w / 2;
-    const playerY = this.y + this.standSprite.h / 2;
-    const otherX = character.x + character.standSprite.w / 2;
-    const otherY = character.y + character.standSprite.h / 2;
+    const playerX = this.x + this.standSprite.getFrame().w / 2;
+    const playerY = this.y + this.standSprite.getFrame().h / 2;
+    const otherX = character.x + character.standSprite.getFrame().w / 2;
+    const otherY = character.y + character.standSprite.getFrame().h / 2;
 
     const width = Math.abs(playerX - otherX);
     const height = Math.abs(playerY - otherY);
@@ -200,6 +200,7 @@ export class Player extends AbstractCharacter {
         delete this.dialog;
       }
 
+      this.isMove = true;
       keyboardObject.pressed = true;
     }
   }
@@ -207,6 +208,7 @@ export class Player extends AbstractCharacter {
   private keyUp(e: KeyboardEvent) {
     const keyboardObject = this.keysPreferences[e.keyCode];
     if (keyboardObject) {
+      this.isMove = false;
       keyboardObject.pressed = false;
     }
   }

@@ -28,10 +28,7 @@ export class Camera {
       const sprite = scene.sprites[key];
       acc[key] = new Sprite(
         sprite.image,
-        sprite.x,
-        sprite.y,
-        sprite.w,
-        sprite.h,
+        sprite.frames,
       );
       return acc
     }, {})
@@ -77,8 +74,8 @@ export class Camera {
       this.player.checkCollision(
         character.x,
         character.y,
-        character.standSprite.w,
-        character.standSprite.h,
+        character.standSprite.getFrame().w,
+        character.standSprite.getFrame().h,
       )
       this.player.setInteractive(character);
       character.draw(this.x, this.y, ctx);
